@@ -4,12 +4,33 @@
 #include <string>
 #include <iostream>
 
-// TODO ----> FINISH LOGIC. Splits values and stores them in tokens[]
+// Splits line and adds its data to an array
 bool splitCSVLine(const std::string& line, std::string tokens[]) {
-    bool inQuotes  = false;
+    int col = 0; // Represents current csv column that is being filled
+    size_t i = 0; // Current character index
 
+    // Get values from every column of the line and store them in tokens respectively
+    while(i < line.size() && col < 6) {
+        if(line[i] == '"') {
+            i++; // skips opening quote
+            while(i < line.size() && line[i] != '"') {
+                tokens[col] += line[i];
+                i++; // moves to next character
+            }
+            i++; // Skips closing quote
+            i++; // skips following comma
+        }
+        else {
+            while(i < line.size() && line[i] != ',') {
+                tokens[col] += line[i];
+                i++;
+            }
+            i++; // skips following comma
+        }
+        col++; // moves to fill next column data
+    }
 
-    return inQuotes;
+    return col == 6; // returns true when all columns where filled for all lines
 }
 
 // TODO (almost done)
