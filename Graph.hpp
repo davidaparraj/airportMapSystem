@@ -44,10 +44,16 @@ public:
     int findNode(const std::string& code) const;
     // Returns total number of airports in the graph
     int size() const;
-
+    // Dijkstra's algorithm which searched the nodes and determines the shortest path.
+    std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
 
     // Prints graph
     void print() const;
+    // prints the shortest path given from the dijkstra algo
+    void printShortestPath(const std::string& origin, const std::string& dest);
+
+
+
 
 private: 
     // array containing all of the nodes (airports) in the graph
