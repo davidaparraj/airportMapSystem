@@ -7,7 +7,9 @@
 
 
 
-// Splits line and adds its data to an array
+
+
+// TODO ----> FINISH LOGIC. Splits values and stores them in tokens[]
 bool splitCSVLine(const std::string& line, std::string tokens[]) {
     int col = 0; // Represents current csv column that is being filled
     size_t i = 0; // Current character index
