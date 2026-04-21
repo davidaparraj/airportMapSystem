@@ -33,7 +33,7 @@ bool splitCSVLine(const std::string& line, std::string tokens[]) {
     return col == 6; // returns true when all columns where filled for all lines
 }
 
-// TODO (almost done)
+
 void Graph::parseAndBuild(std::ifstream& infile) {
     // Example: ABE,DTW,"Allentown, PA","Detroit, MI",424,374
     std::string line;
