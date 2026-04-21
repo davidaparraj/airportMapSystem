@@ -90,10 +90,12 @@ void Graph::addEdge(const std::string& from, const std::string& to, int distance
 // Finds all of the Paths and adds them into the MinHeap
 // Minheap sorts for shorest path staying at the root
 // Dijkstra ends by pulling the root from the MinHeap
-std::vector<int> Graph::dijkstra(int source) {
+std::vector<int> Graph::dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist) {
     // Declaring Infinty as INF for the algo.
     const int INF = 1e9;
     std::vector<int> dist(airports.size(), INF);
+    costDist.assign(airports.size(), INF);
+    prev.assign(airports.size(), -1);
     dist[source] = 0;
 
     MinHeap minHeap;
@@ -104,19 +106,56 @@ std::vector<int> Graph::dijkstra(int source) {
         int currentScore = current.combined_score;
         int currentNode = current.node;
 
-        if(currentScore > dist[currentNode]) continue;
+        if(currentScore > dist[currentNode] + costDist[currentNode]) continue;
 
         for (const Flight& flight : airports[currentNode].adjacent){
-            int combined = flight.distance + flight.cost;
-            int newDist =  dist[currentNode] + combined;
+            int newDist =  dist[currentNode] + flight.distance;
+            int newCost = costDist[currentNode] + flight.cost;
+            int combined = newDist + newCost;
+  
 
-            if (newDist < dist[flight.destination]) {
+            if (combined < dist[currentNode] + costDist[currentNode] + flight.distance + flight.cost) {
                 dist[flight.destination] = newDist;
-                minHeap.push(newDist, flight.destination);
+                costDist[flight.destination] = newCost;
+                prev[flight.destination] = currentNode;
+                minHeap.push(combined, flight.destination);
             }
         }
     }
 
     return dist;
+}
+
+void Graph::printShortestPath(const std::string& origin, const std::string& dest){
+    int src = findNode(origin);
+    int dst = findNode(dest);
+
+    if (src == -1 || dst == -1) {
+        std::cout << "Shortest route from " << origin << " to " << dest << " : None" << std::endl;
+        return; 
+    }
+
+    std::vector<int> prev;
+    std::vector<int> costDist;
+    std::vector<int> dist = dijkstra(src, prev, costDist);  
+
+    if (dist[dst] == 1e9) {
+        std::cout << "Shortest route from " << origin << " to " << dest << " : None" << std::endl;
+        return;
+    }
+
+    std::vector<int> path;
+    for (int at = dst; at != -1; at = prev[at]) {
+        path.push_back(at);
+    }
+
+    std::cout << "Shortest route from " << origin << " to " << dest << ": ";
+    for (int i = path.size()-1; i >= 0; i--) {
+        std::cout << airports[path[i]].code;
+        if (i != 0) {
+            std::cout << " -> ";
+        }
+    }
+    std::cout << ". The length is " << dist[dst] << ". The cost is " << costDist[dst] << std::endl;
 }
 
