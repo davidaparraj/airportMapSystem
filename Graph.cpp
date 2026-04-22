@@ -217,7 +217,13 @@ void Graph::printShortestPathBySate(const std::string& origin, const std::string
     std::vector<int> dist;
     dijkstra(src, prev, dist); // Find shortest paths
 
-    std::cout << "\nPath" << std::setw(25) << "Length" << std::setw(15) << "Cost\n";
+    // Print header
+    std::cout << "\n";
+    std::cout   << std::left 
+                << std::setw(30) << "Path"
+                << std::setw(15) << "Length"
+                << "Cost\n";
+
     // Find all codes for given state
     // Loop through every airport in the graph
     // For each airport, check if its state matches the requested state
@@ -227,7 +233,6 @@ void Graph::printShortestPathBySate(const std::string& origin, const std::string
         if(expState != state) continue; // Skips if city is not in the state
 
         if(dist[i] == INF) { // Couldn't find path to airport
-            std::cout << "None";
             continue; // Skip to next airport
         }
 
@@ -237,19 +242,19 @@ void Graph::printShortestPathBySate(const std::string& origin, const std::string
             path.push_back(at);
         }
         // Print shortest path
+        std::string pathStr;
         for (int j = path.size()-1; j >= 0; j--) {
-            std::cout << airports[path[j]].code;
-            if (j != 0) {
-                std::cout << "->";
+            pathStr += airports[path[j]].code;
+            if(j != 0) {
+                pathStr += "->";
             }
         }
-        std::cout << std::setw(9);
-
+        
         // Print length
-        std::cout << dist[i] << "\t\t";
-        // Print total
-        int totalCost = getTotalCost(path, airports);
-        std::cout << totalCost << "\n";
+        std::cout   << std::left 
+                    << std::setw(30) << pathStr
+                    << std::setw(15) << dist[i]
+                    << getTotalCost(path, airports) << "\n";
     }
 }
 
