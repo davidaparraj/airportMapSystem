@@ -54,7 +54,7 @@ public:
     void printShortestPath(const std::string& origin, const std::string& dest);
 
     // Task 3) finds and prints shortest paths to all airports in one state. Also includes paths that have stops
-    void task3(const std::string& origin, const std::string& dest);
+    void printShortestPathBySate(const std::string& origin, const std::string& state);
 
     // Prints graph
     void print() const;
@@ -69,6 +69,9 @@ private:
 
 // Splits values and stores them in tokens[]
 bool splitCSVLine(const std::string& line, std::string tokens[]);
+// Returns a city's state
+std::string getState(const std::string& city);
+int getTotalCost(const std::vector<int> path, const std::vector<Airport> airports);
 
 
 #endif

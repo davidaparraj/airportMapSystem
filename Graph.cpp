@@ -4,10 +4,11 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 
 
-
+/* ---------- Helper functions ---------- */
 bool splitCSVLine(const std::string& line, std::string tokens[]) {
     int col = 0; // Represents current csv column that is being filled
     size_t i = 0; // Current character index
@@ -34,6 +35,34 @@ bool splitCSVLine(const std::string& line, std::string tokens[]) {
     }
     return col == 6; // returns true when all columns where filled for all lines
 }
+
+std::string getState(const std::string& city) {
+    // Return last two characters excluding the closing quote
+    // Ex: FL" ----> only return FL
+    std::string state;
+
+    state += city[city.size() - 2];
+    state += city[city.size() - 1];
+    return state;
+}
+
+int getTotalCost(const std::vector<int> path, const std::vector<Airport> airports) {
+    // Calculate total cost by walking the path forward
+    int totalCost = 0;
+    for (int i = path.size()-1; i > 0; i--) {
+        int from = path[i];
+        int to = path[i - 1];
+
+        for(const Flight flight : airports[from].adjacent) {
+            if(flight.destination == to) {
+                totalCost += flight.cost;
+                 break;
+            }
+        }
+    }
+    return totalCost;
+}
+
 
 void Graph::parseAndBuild(std::ifstream& infile) {
     // Example: ABE,DTW,"Allentown, PA","Detroit, MI",424,374
@@ -145,7 +174,7 @@ void Graph::printShortestPath(const std::string& origin, const std::string& dest
 
     std::vector<int> prev;
     std::vector<int> dist;
-    dijkstra(src, prev, dist); // Finds shortest path  
+    dijkstra(src, prev, dist); // Finds shortest paths
     
     if (dist[dst] == INF) { // Path not found
         std::cout << "None" << std::endl;
@@ -162,25 +191,63 @@ void Graph::printShortestPath(const std::string& origin, const std::string& dest
     for (int i = path.size()-1; i >= 0; i--) {
         std::cout << airports[path[i]].code;
         if (i != 0) {
-            std::cout << " -> ";
+            std::cout << "->";
         }
     }
 
-    // Calculate total cost by walking the path forward
-    int totalCost = 0;
-    for (int i = path.size()-1; i > 0; i--) {
-        int from = path[i];
-        int to = path[i - 1];
-
-        for(const Flight flight : airports[from].adjacent) {
-            if(flight.destination == to) {
-                totalCost += flight.cost;
-                break;
-            }
-        }
-    }
-
+    int totalCost = getTotalCost(path, airports);
     //dist[dst] = distance calculated in Dijsktra's algorithm (dist[flight.destination])
     std::cout << ". The length is " << dist[dst] << ". The cost is " << totalCost << std::endl;
 }
 
+// TODO ----> FIX FORMATTING
+void Graph::printShortestPathBySate(const std::string& origin, const std::string& state) {
+    // Run Dijktra from origin
+    const int INF = 1e9;
+    std::cout << "Shortest paths from " << origin << " to " << state << " state airports are: ";
+
+    int src = findNode(origin);
+    if(src == -1) { // source not found.
+        std::cout << "None.\n";
+        return;
+    }
+
+    std::vector<int> prev;
+    std::vector<int> dist;
+    dijkstra(src, prev, dist); // Find shortest paths
+
+    std::cout << "\nPath" << std::setw(25) << "Length" << std::setw(15) << "Cost\n";
+    // Find all codes for given state
+    // Loop through every airport in the graph
+    // For each airport, check if its state matches the requested state
+    // If it does and a path exists, print i(path to destination)
+    for(int i = 0; i < airports.size(); i++) {
+        std::string expState = getState(airports[i].city);
+        if(expState != state) continue; // Skips if city is not in the state
+
+        if(dist[i] == INF) { // Couldn't find path to airport
+            std::cout << "None";
+            continue; // Skip to next airport
+        }
+
+        // Reconstruct path by walking backwards
+        std::vector<int> path;
+        for (int at = i; at != -1; at = prev[at]) {
+            path.push_back(at);
+        }
+        // Print shortest path
+        for (int j = path.size()-1; j >= 0; j--) {
+            std::cout << airports[path[j]].code;
+            if (j != 0) {
+                std::cout << "->";
+            }
+        }
+        std::cout << std::setw(9);
+
+        // Print length
+        std::cout << dist[i] << "\t\t";
+        // Print total
+        int totalCost = getTotalCost(path, airports);
+        std::cout << totalCost << "\n";
+    }
+}
