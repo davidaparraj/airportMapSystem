@@ -35,8 +35,9 @@ int main() {
     graph.parseAndBuild(infile);
 
     // Task 2) Find shortest path by distance
-    graph.printShortestPath("ABE", "DTW");
     graph.printShortestPath("IAD", "MIA");
+    graph.printShortestPath("ATL", "BOS");
+    graph.printShortestPath("SYR", "TYS");
 
     // Taks 3) Shortest paths to all airports in a state
     
