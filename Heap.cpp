@@ -14,7 +14,7 @@ int MinHeap::right_node(int i) {
 }
 
 void MinHeap::HeapifyUp(int i) {
-    while (i > 0 && data[i].combined_score < data[parent_node(i)].combined_score) {
+    while (i > 0 && data[i].distance < data[parent_node(i)].distance) {
         HeapNode temp = data[i];
         data[i] = data[parent_node(i)];
         data[parent_node(i)] = temp;
@@ -27,10 +27,10 @@ int smallest = i;
     int left = left_node(i);
     int right = right_node(i);
 
-    if (left < data.size() && data[left].combined_score < data[smallest].combined_score) {
+    if (left < data.size() && data[left].distance < data[smallest].distance) {
         smallest = left;
     }
-    if (right < data.size() && data[right].combined_score < data[smallest].combined_score) {
+    if (right < data.size() && data[right].distance < data[smallest].distance) {
         smallest = right;
     }
     if (smallest != i) {
@@ -45,8 +45,8 @@ bool MinHeap::empty() {
     return data.empty();
 }
 
-void MinHeap::push(int combined_score, int node){
-    data.push_back({combined_score, node});
+void MinHeap::push(int distance, int node){
+    data.push_back({distance, node});
     HeapifyUp(data.size()-1);   
 }
 
@@ -59,4 +59,3 @@ HeapNode MinHeap::pop(){
     }
     return top;
 }
-
