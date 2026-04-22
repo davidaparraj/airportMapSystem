@@ -391,35 +391,22 @@ Graph Graph::buildUndirected() const {
     for(int i = 0; i < n; i++) {
         newGraph.addNode(airports[i].code, airports[i].city);
     }
-
-    // Allocate visited array
-    // It helps to identify to chhose the single edge for a pair of vertices u and v
-    bool** visited = new bool*[n];
-    for(int i = 0; i < n; i++) {
-        visited[i] == new bool[n];
-        // Set all elements inside (visited adjacent flights) to false
-        for(int j = 0; j < n; j++) {
-            visited[i][j] = false;
-        }
-    }
     
     // Determine how to add the undirected edges by cost
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < airports[i].adjacent.size(); j++) {
             // Check adjacent to ssee if reverse edge was visited
-
             int dest = airports[i].adjacent[j].destination;
-            if(visited[i][j]) continue; // Already visited
+            if(dest <= i) continue; // Skip. Pair already visited or to be visited
 
             int forwardCost = airports[i].adjacent[j].cost; // Cost from u to v
             int reverseCost = getEdgeCost(dest, i); // Cost from v to u
-            
+
             int costToUse;
             if(reverseCost == -1) {
                 // There is only one direction
                 costToUse = forwardCost;
             }
-
             else {
                 // Both directions exist. Keep the lowest in code
                 costToUse = (forwardCost < reverseCost) ? forwardCost: reverseCost;
@@ -428,19 +415,7 @@ Graph Graph::buildUndirected() const {
             // Add node and undirected edge to build new graph
             newGraph.addEdge(airports[i].code, airports[dest].code, 0, costToUse);
             newGraph.addEdge(airports[dest].code, airports[i].code, 0, costToUse);
-
-
-            // Mark pair as visited
-            visited[i][dest] = true;
-            visited[dest][i] = true;
         }
     }
-
-    // Clean up visited array
-    for (int i = 0; i < n; i++) {
-        delete[] visited[i];
-    }
-    delete[] visited;
-
     return newGraph;
 }
