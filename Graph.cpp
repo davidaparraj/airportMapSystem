@@ -35,7 +35,6 @@ bool splitCSVLine(const std::string& line, std::string tokens[]) {
     return col == 6; // returns true when all columns where filled for all lines
 }
 
-
 void Graph::parseAndBuild(std::ifstream& infile) {
     // Example: ABE,DTW,"Allentown, PA","Detroit, MI",424,374
     std::string line;
@@ -63,7 +62,6 @@ void Graph::parseAndBuild(std::ifstream& infile) {
         addEdge(originCode, destCode, distance, cost);
     }
 }
-
 
 int Graph::findNode(const std::string& code) const {
     for(int i = 0; i < airports.size(); i++) {
@@ -95,7 +93,7 @@ void Graph::addEdge(const std::string& from, const std::string& to, int distance
     airports[fromIndex].adjacent.push_back(Flight(toIndex, distance, cost));
 }
 
-// Shortest Possible Path algorith (Dijksra) 
+// Shortest Possible Path algorith (Dijkstra) 
 // Finds all of the Paths and adds them into the MinHeap
 // Minheap sorts for shorest path staying at the root
 // Dijkstra ends by pulling the root from the MinHeap
@@ -147,7 +145,7 @@ void Graph::printShortestPath(const std::string& origin, const std::string& dest
     std::vector<int> prev;
     std::vector<int> costDist;
     std::vector<int> dist = dijkstra(src, prev, costDist);  
-
+    
     if (dist[dst] == 1e9) {
         std::cout << "Shortest route from " << origin << " to " << dest << " : None" << std::endl;
         return;

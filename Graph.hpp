@@ -38,27 +38,25 @@ public:
     void addNode(const std::string& code, const std::string& city);
     // Adds a directed flight from -> to  with both weights 
     void addEdge(const std::string& from, const std::string& to, int distance, int cost);
-
-    /* --------- Algorithms -------------*/
     // Looks up index of an airport by its code. Return its index. Return -1 if not found
     int findNode(const std::string& code) const;
-
-    /*Shortest Possible Path algorith (Dijksra) 
-       Finds all of the Paths and adds them into the MinHeap
-       Minheap sorts for shorest path staying at the root
-       Dijkstra ends by pulling the root from the MinHeap*/
-    std::vector<int> dijkstra(int source);
     // Returns total number of airports in the graph
     int size() const;
+
+    /* --------- Algorithms -------------*/
+
     // Dijkstra's algorithm which searched the nodes and determines the shortest path.
     std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
 
-    // Prints graph
-    void print() const;
-    // prints the shortest path given from the dijkstra algo
+
+    // Task 2) prints the shortest path given from the dijkstra algo
     void printShortestPath(const std::string& origin, const std::string& dest);
 
+    // Task 3) finds and prints shortest paths between two airports. Also includes paths that have stops
+    void task3(const std::string& origin, const std::string& dest);
 
+    // Prints graph
+    void print() const;
 
 
 private: 
