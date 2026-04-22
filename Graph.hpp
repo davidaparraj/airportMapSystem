@@ -46,13 +46,14 @@ public:
     /* --------- Algorithms -------------*/
 
     // Dijkstra's algorithm which searched the nodes and determines the shortest path.
-    std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
+    void dijkstra(int source, std::vector<int>& prev, std::vector<int>& dist);
+    // std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
 
 
-    // Task 2) prints the shortest path given from the dijkstra algo
+    // Task 2) prints the shortest path given from the dijkstra algorithm
     void printShortestPath(const std::string& origin, const std::string& dest);
 
-    // Task 3) finds and prints shortest paths between two airports. Also includes paths that have stops
+    // Task 3) finds and prints shortest paths to all airports in one state. Also includes paths that have stops
     void task3(const std::string& origin, const std::string& dest);
 
     // Prints graph
