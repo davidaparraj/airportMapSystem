@@ -159,7 +159,7 @@ void Graph::dijkstra(int source, std::vector<int>& prev, std::vector<int>& dist)
     }
 }
 
-// Task 2) optimizes shortest part according to distance. Report distance and cost at the end
+// Task 2) optimizes shortest path according to distance. Report distance and cost at the end
 void Graph::printShortestPath(const std::string& origin, const std::string& dest){
     const int INF = 1e9;
     int src = findNode(origin);
@@ -200,6 +200,7 @@ void Graph::printShortestPath(const std::string& origin, const std::string& dest
     std::cout << ". The length is " << dist[dst] << ". The cost is " << totalCost << std::endl;
 }
 
+// Task 3) optimizes shortest path from origin to all airports in one state. Prints path, distance and cost
 // TODO ----> FIX FORMATTING
 void Graph::printShortestPathBySate(const std::string& origin, const std::string& state) {
     // Run Dijktra from origin
@@ -360,4 +361,81 @@ void Graph::printConnectionCounts() {
     for (int i = sorted.size() - 1; i >= 0; i--) {
         std::cout << airports[sorted[i].node].code << "\t\t" << sorted[i].distance << "\n";
     }
+}
+
+/* Task 6) 
+    Creates an undirected Graph.
+    Only stores one directed edge for each pair of nodes u an v (either (u,v) or (v,u), not both).
+    We keep that single edge with its cost as an undirected weighted edge. Distance is ignored
+*/
+
+int Graph::getEdgeCost(int u, int v) const {
+    for (int i = 0; i < airports[u].adjacent.size(); i++) {
+        if (airports[u].adjacent[i].destination == v)
+            return airports[u].adjacent[i].cost;
+    }
+
+    return -1; // Edge doesn't exist
+}
+
+Graph Graph::buildUndirected() const {
+    Graph newGraph;
+    int n = airports.size();
+
+    // Copy all nodes first
+    for(int i = 0; i < n; i++) {
+        newGraph.addNode(airports[i].code, airports[i].city);
+    }
+
+    // Allocate visited array
+    // It helps to identify to chhose the single edge for a pair of vertices u and v
+    bool** visited = new bool*[n];
+    for(int i = 0; i < n; i++) {
+        visited[i] == new bool[n];
+        // Set all elements inside (visited adjacent flights) to false
+        for(int j = 0; j < n; j++) {
+            visited[i][j] = false;
+        }
+    }
+    
+    // Determine how to add the undirected edges by cost
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < airports[i].adjacent.size(); j++) {
+            // Check adjacent to ssee if reverse edge was visited
+
+            int dest = airports[i].adjacent[j].destination;
+            if(visited[i][j]) continue; // Already visited
+
+            int forwardCost = airports[i].adjacent[j].cost; // Cost from u to v
+            int reverseCost = getEdgeCost(dest, i); // Cost from v to u
+            
+            int costToUse;
+            if(reverseCost == -1) {
+                // There is only one direction
+                costToUse = forwardCost;
+            }
+
+            else {
+                // Both directions exist. Keep the lowest in code
+                costToUse = (forwardCost < reverseCost) ? forwardCost: reverseCost;
+            }
+
+            // Add node and undirected edge to build new graph
+            newGraph.addEdge(airports[i].code, airports[dest].code, 0, costToUse);
+            newGraph.addEdge(airports[dest].code, airports[i].code, 0, costToUse);
+
+
+            // Mark pair as visited
+            visited[i][dest] = true;
+            visited[dest][i] = true;
+        }
+    }
+
+    // Clean up visited array
+    for (int i = 0; i < n; i++) {
+        delete[] visited[i];
+    }
+    delete[] visited;
+
+    return newGraph;
 }

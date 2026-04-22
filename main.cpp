@@ -49,5 +49,10 @@ int main() {
     // Task 5)
     graph.printConnectionCounts();
 
+    // Task 6) Create an undirect graph_u from original graph
+    Graph G_u;
+    G_u.buildUndirected();
+
+
     return 0;
 }

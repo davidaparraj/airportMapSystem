@@ -33,7 +33,6 @@ class Graph {
 public:
     // Reads csv file and builds graph
     void parseAndBuild(std::ifstream& infile);
-
     // Adds an airport to the graph
     void addNode(const std::string& code, const std::string& city);
     // Adds a directed flight from -> to  with both weights 
@@ -62,6 +61,11 @@ public:
 
     // Prints graph
     void print() const;
+    // Task 6) Creates undirected Graph_u from original Graph G
+    Graph buildUndirected() const;
+    // Returns cost of edge from airport u to airport v, or -1 if it doesn't exist
+    int getEdgeCost(int u, int v) const;
+
 
     void printConnectionCounts();
 
