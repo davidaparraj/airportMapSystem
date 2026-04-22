@@ -3,8 +3,8 @@
 #include <vector>
 #include <string>
 
-#include <Graph.hpp>
-#include <Heap.hpp>
+#include "Graph.hpp"
+#include "Heap.hpp"
 
 
 int main() {

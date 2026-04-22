@@ -253,6 +253,115 @@ void Graph::printShortestPathBySate(const std::string& origin, const std::string
     }
 }
 
+// Finds the shortest path with a designated amount of stops
+// -- tracks stops left, total cost of path, whether an aiport has been visited to not do repeats, and chooses the shortest path from the ones that succeed
+void Graph::findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost){
+    // Checks if we are at the destination with 0 stops left
+    if (stopsLeft == -1 && current == dest) {
+        // makes a value for the combined cost and distance for the trip
+        int combined = currCost + currDist;
+        // checks if the current combined weight is smaller than the already check best combined
+        if (combined < bestCost + bestDist) {
+            // if the current path is the best found then it changes the variables to represent it
+            bestDist = currDist;
+            bestCost = currCost;
+            bestPath = path;
+        }
+        return;
+    }
+
+    // no stops left but not at the destination find new route
+    if (stopsLeft == -1) { return; }
+
+    // for loop that checks the airports adjacent airports and the flights to them
+    for (const Flight& flight : airports[current].adjacent) {
+        // if the airport hasnt been visited yet, continue to the rest
+        if (!visited[flight.destination]) {
+            visited[flight.destination] = true; // mark the node as visited
+            path.push_back(flight.destination); // push the airport to the path
+
+            // recursive function to find the best path
+            findPathWithStops(flight.destination, dest, stopsLeft-1, currDist + flight.distance, currCost + flight.cost, path, visited, bestPath, bestDist, bestCost);
+
+            // back track through the path
+            path.pop_back();
+            visited[flight.destination] = false;
+        }
+    }
+}
+
+
+
+void Graph::printPathWithStops(const std::string& origin, const std::string& dest, int stops) {
+    int src = findNode(origin);
+    int dst = findNode(dest);
+
+    if (src == -1 || dst == -1) {
+        std::cout << "\nShortest route from " << origin << " to " << dest << " with " << stops << " stops: None" << std::endl;
+        return;
+    }
+
+    const int INF = 1e9; // defining infinity
+    std::vector<int> path; 
+    std::vector<int> bestPath;
+    std::vector<bool> visited(airports.size(), false); // creating the visited vector 
+    int bestDist = INF;
+    int bestCost = INF;
+
+    // Mark source as visited to prevent revisiting
+    visited[src] = true;
+    path.push_back(src);
+
+    // calling the recursive helper function of findPathWithStops 
+    findPathWithStops(src, dst, stops, 0, 0, path, visited, bestPath, bestDist, bestCost);
+
+    // if a path doesnt exist with that amount of stops it prints none
+    if (bestPath.empty()) {
+        std::cout << "\nShortest route from " << origin << " to " << dest << " with " << stops << " stops: None" << std::endl;
+        return;
+    }
+
+    // prints the shortest route with the designated amount of stops
+    std::cout << "\nShortest route from " << origin << " to " << dest << " with " << stops << " stops: ";
+    // for loop printing the airports that were added to the array for the most efficient path.
+    for (int i = 0; i < bestPath.size(); i++) {
+        std::cout << airports[bestPath[i]].code;
+        if (i != bestPath.size() - 1) std::cout << " -> ";
+    }
+    std::cout << ". The length is " << bestDist << ". The cost is " << bestCost << std::endl;
+}
+
+
+// Task 5 printing the amount of connections -- inbound + outbound flights -- an airport has
+void Graph::printConnectionCounts() {
+    // Count inbound connections
+    std::vector<int> inbound(airports.size(), 0);
+    for (int i = 0; i < airports.size(); i++) {
+        for (const Flight& flight : airports[i].adjacent) {
+            inbound[flight.destination]++;
+        }
+    }
+
+    // Push total connections into  the Minheap
+    MinHeap minHeap;
+    for (int i = 0; i < airports.size(); i++) {
+        int outbound = airports[i].adjacent.size();
+        int total = inbound[i] + outbound;
+        minHeap.push(total, i);
+    }
+
+    // Pop everything into temp vector
+    std::vector<HeapNode> sorted;
+    while (!minHeap.empty()) {
+        sorted.push_back(minHeap.pop());
+    }
+
+    // Print in reverse for highest to lowest
+    std::cout << "Airport\t\tConnections\n";
+    for (int i = sorted.size() - 1; i >= 0; i--) {
+        std::cout << airports[sorted[i].node].code << "\t\t" << sorted[i].distance << "\n";
+    }
+}
 
 /* Task 6) 
     Creates an undirected Graph.
