@@ -1,0 +1,45 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <limits>
+
+#include "Graph.hpp"
+
+
+int main() {
+    // Create a graph using adjacency list
+
+    /* Open file and parse the following values:
+        As a node (airport characteristics)
+            - Airport code
+            - Airport city
+        As an edge (flight characteristics)
+        - Distance
+        - Cost
+
+        Add info into the graph
+    */
+    std::ifstream infile("airports.csv");
+    if(!infile) {
+        std::cerr << "Error. Could not open file.\n";
+        return 1;
+    }
+    // Ignores first line (only contains headers)
+    infile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
+    // Task 1) Create graph
+    // Creates graph to store data from csv file
+    Graph graph;
+    graph.parseAndBuild(infile);
+
+    // Task 2) Find shortest path by distance
+    graph.printShortestPath("ABE", "DTW");
+
+    // Taks 3) Shortest paths between airports
+    
+
+
+    return 0;
+}
