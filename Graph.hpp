@@ -34,14 +34,20 @@ public:
     // Reads csv file and builds graph
     void parseAndBuild(std::ifstream& infile);
 
-    // Adds an airport to the graph. Returns its index
+    // Adds an airport to the graph
     void addNode(const std::string& code, const std::string& city);
     // Adds a directed flight from -> to  with both weights 
     void addEdge(const std::string& from, const std::string& to, int distance, int cost);
 
     /* --------- Algorithms -------------*/
-    // Looks up index of an airport by its code. Return -1 if not found
+    // Looks up index of an airport by its code. Return its index. Return -1 if not found
     int findNode(const std::string& code) const;
+
+    /*Shortest Possible Path algorith (Dijksra) 
+       Finds all of the Paths and adds them into the MinHeap
+       Minheap sorts for shorest path staying at the root
+       Dijkstra ends by pulling the root from the MinHeap*/
+    std::vector<int> dijkstra(int source);
     // Returns total number of airports in the graph
     int size() const;
     // Dijkstra's algorithm which searched the nodes and determines the shortest path.
@@ -60,6 +66,10 @@ private:
     std::vector<Airport> airports;
 };
 
+/* ---------- Helper functions ---------- */
+
+// Splits values and stores them in tokens[]
+bool splitCSVLine(const std::string& line, std::string tokens[]);
 
 
 #endif

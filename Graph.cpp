@@ -8,8 +8,6 @@
 
 
 
-
-// Splits values and stores them in tokens[]
 bool splitCSVLine(const std::string& line, std::string tokens[]) {
     int col = 0; // Represents current csv column that is being filled
     size_t i = 0; // Current character index
@@ -64,6 +62,17 @@ void Graph::parseAndBuild(std::ifstream& infile) {
         addNode(destCode, destCity);
         addEdge(originCode, destCode, distance, cost);
     }
+}
+
+
+int Graph::findNode(const std::string& code) const {
+    for(int i = 0; i < airports.size(); i++) {
+        if(airports[i].code == code) {
+            return i;
+        }
+    }
+
+    return -1; // Airport does not exist
 }
 
 void Graph::addNode(const std::string& code, const std::string& city) {
