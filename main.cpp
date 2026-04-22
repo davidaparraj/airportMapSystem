@@ -5,6 +5,7 @@
 #include <limits>
 
 #include "Graph.hpp"
+#include "Heap.hpp"
 
 
 int main() {
@@ -42,6 +43,11 @@ int main() {
     // Taks 3) Shortest paths to all airports in a state
     graph.printShortestPathBySate("DFW", "FL");
 
+    // Task 4) Shortest path with a given amount of stops
+    graph.printPathWithStops("IAD", "MIA", 3);
+
+    // Task 5)
+    graph.printConnectionCounts();
 
     return 0;
 }

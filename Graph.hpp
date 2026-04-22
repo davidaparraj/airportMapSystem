@@ -47,7 +47,6 @@ public:
 
     // Dijkstra's algorithm which searched the nodes and determines the shortest path.
     void dijkstra(int source, std::vector<int>& prev, std::vector<int>& dist);
-    // std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
 
 
     // Task 2) prints the shortest path given from the dijkstra algorithm
@@ -56,13 +55,23 @@ public:
     // Task 3) finds and prints shortest paths to all airports in one state. Also includes paths that have stops
     void printShortestPathBySate(const std::string& origin, const std::string& state);
 
+    // Task 4) finds and prints the shortest path to a given airport with a predetermined amount of intermediate stops
+    void printPathWithStops(const std::string& origin, const std::string& dest, int stops);
+
+    
+
     // Prints graph
     void print() const;
+
+    void printConnectionCounts();
 
 
 private: 
     // array containing all of the nodes (airports) in the graph
     std::vector<Airport> airports;
+
+    // recursive helper function for printPathWithStops
+void findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost);
 };
 
 /* ---------- Helper functions ---------- */
@@ -72,6 +81,8 @@ bool splitCSVLine(const std::string& line, std::string tokens[]);
 // Returns a city's state
 std::string getState(const std::string& city);
 int getTotalCost(const std::vector<int> path, const std::vector<Airport> airports);
+
+
 
 
 #endif
