@@ -5,8 +5,8 @@
 
 // Structure to record the combined weighted score given from the MinHeap.
 struct HeapNode {
-// Combined score is the shortest path from node U to node V
-  int combined_score;
+// the shortest path from source to node V (destination)
+  int distance;
 // the node that we are going to.
   int node;  
     
@@ -29,7 +29,7 @@ class MinHeap {
 public:
 
     bool empty();
-    void push(int combined_score, int node);
+    void push(int distance, int node);
     HeapNode pop();
 };
 

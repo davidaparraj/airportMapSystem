@@ -4,12 +4,11 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 
 
-
-
-// Splits values and stores them in tokens[]
+/* ---------- Helper functions ---------- */
 bool splitCSVLine(const std::string& line, std::string tokens[]) {
     int col = 0; // Represents current csv column that is being filled
     size_t i = 0; // Current character index
@@ -35,6 +34,33 @@ bool splitCSVLine(const std::string& line, std::string tokens[]) {
         col++; // moves to fill next column data
     }
     return col == 6; // returns true when all columns where filled for all lines
+}
+
+std::string getState(const std::string& city) {
+    // Return last two characters excluding the closing quote
+    // Ex: FL" ----> only return FL
+    std::string state;
+
+    state += city[city.size() - 2];
+    state += city[city.size() - 1];
+    return state;
+}
+
+int getTotalCost(const std::vector<int> path, const std::vector<Airport> airports) {
+    // Calculate total cost by walking the path forward
+    int totalCost = 0;
+    for (int i = path.size()-1; i > 0; i--) {
+        int from = path[i];
+        int to = path[i - 1];
+
+        for(const Flight flight : airports[from].adjacent) {
+            if(flight.destination == to) {
+                totalCost += flight.cost;
+                 break;
+            }
+        }
+    }
+    return totalCost;
 }
 
 
@@ -66,6 +92,16 @@ void Graph::parseAndBuild(std::ifstream& infile) {
     }
 }
 
+int Graph::findNode(const std::string& code) const {
+    for(int i = 0; i < airports.size(); i++) {
+        if(airports[i].code == code) {
+            return i;
+        }
+    }
+
+    return -1; // Airport does not exist
+}
+
 void Graph::addNode(const std::string& code, const std::string& city) {
     int index = findNode(code);
 
@@ -86,76 +122,132 @@ void Graph::addEdge(const std::string& from, const std::string& to, int distance
     airports[fromIndex].adjacent.push_back(Flight(toIndex, distance, cost));
 }
 
-// Shortest Possible Path algorith (Dijksra) 
+// Shortest Possible Path algorith (Dijkstra) 
 // Finds all of the Paths and adds them into the MinHeap
 // Minheap sorts for shorest path staying at the root
 // Dijkstra ends by pulling the root from the MinHeap
-std::vector<int> Graph::dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist) {
-    // Declaring Infinty as INF for the algo.
+void Graph::dijkstra(int source, std::vector<int>& prev, std::vector<int>& dist) {
+    // Declaring Infinty as INF for the algo
     const int INF = 1e9;
-    std::vector<int> dist(airports.size(), INF);
-    costDist.assign(airports.size(), INF);
+    dist.assign(airports.size(), INF);
     prev.assign(airports.size(), -1);
-    dist[source] = 0;
+    dist[source] = 0; // Set source node to zero
 
+    // Create heap and add root
     MinHeap minHeap;
     minHeap.push(0, source);
+    
 
     while(!minHeap.empty()) {
         HeapNode current = minHeap.pop();
-        int currentScore = current.combined_score;
+        int currentDistance = current.distance;
         int currentNode = current.node;
 
-        if(currentScore > dist[currentNode] + costDist[currentNode]) continue;
+        // Current distance must be less than distance to currentNode
+        if(currentDistance > dist[currentNode]) continue; // Not fastest path. Skip it
 
         for (const Flight& flight : airports[currentNode].adjacent){
             int newDist =  dist[currentNode] + flight.distance;
-            int newCost = costDist[currentNode] + flight.cost;
-            int combined = newDist + newCost;
-  
 
-            if (combined < dist[currentNode] + costDist[currentNode] + flight.distance + flight.cost) {
-                dist[flight.destination] = newDist;
-                costDist[flight.destination] = newCost;
-                prev[flight.destination] = currentNode;
-                minHeap.push(combined, flight.destination);
+            // Update distance if shorter path is found
+            if (newDist < dist[flight.destination]) {
+            dist[flight.destination] = newDist;
+            prev[flight.destination] = currentNode;
+            minHeap.push(newDist, flight.destination); // push updated distance and airport index
             }
         }
     }
-
-    return dist;
 }
 
+// Task 2) optimizes shortest part according to distance. Report distance and cost at the end
 void Graph::printShortestPath(const std::string& origin, const std::string& dest){
+    const int INF = 1e9;
     int src = findNode(origin);
     int dst = findNode(dest);
 
-    if (src == -1 || dst == -1) {
-        std::cout << "Shortest route from " << origin << " to " << dest << " : None" << std::endl;
+    std::cout << "Shortest route from " << origin << " to " << dest << ": ";
+
+    if (src == -1 || dst == -1) { // Path doesn't exist
+        std::cout << "None" << std::endl;
         return; 
     }
 
     std::vector<int> prev;
-    std::vector<int> costDist;
-    std::vector<int> dist = dijkstra(src, prev, costDist);  
-
-    if (dist[dst] == 1e9) {
-        std::cout << "Shortest route from " << origin << " to " << dest << " : None" << std::endl;
+    std::vector<int> dist;
+    dijkstra(src, prev, dist); // Finds shortest paths
+    
+    if (dist[dst] == INF) { // Path not found
+        std::cout << "None" << std::endl;
         return;
     }
 
+    // Reconstruct path by walking backwards
     std::vector<int> path;
     for (int at = dst; at != -1; at = prev[at]) {
         path.push_back(at);
     }
 
-    std::cout << "Shortest route from " << origin << " to " << dest << ": ";
+    // Print shortest path
     for (int i = path.size()-1; i >= 0; i--) {
         std::cout << airports[path[i]].code;
         if (i != 0) {
-            std::cout << " -> ";
+            std::cout << "->";
         }
     }
-    std::cout << ". The length is " << dist[dst] << ". The cost is " << costDist[dst] << std::endl;
+
+    int totalCost = getTotalCost(path, airports);
+    //dist[dst] = distance calculated in Dijsktra's algorithm (dist[flight.destination])
+    std::cout << ". The length is " << dist[dst] << ". The cost is " << totalCost << std::endl;
 }
 
+// TODO ----> FIX FORMATTING
+void Graph::printShortestPathBySate(const std::string& origin, const std::string& state) {
+    // Run Dijktra from origin
+    const int INF = 1e9;
+    std::cout << "Shortest paths from " << origin << " to " << state << " state airports are: ";
+
+    int src = findNode(origin);
+    if(src == -1) { // source not found.
+        std::cout << "None.\n";
+        return;
+    }
+
+    std::vector<int> prev;
+    std::vector<int> dist;
+    dijkstra(src, prev, dist); // Find shortest paths
+
+    std::cout << "\nPath" << std::setw(25) << "Length" << std::setw(15) << "Cost\n";
+    // Find all codes for given state
+    // Loop through every airport in the graph
+    // For each airport, check if its state matches the requested state
+    // If it does and a path exists, print i(path to destination)
+    for(int i = 0; i < airports.size(); i++) {
+        std::string expState = getState(airports[i].city);
+        if(expState != state) continue; // Skips if city is not in the state
+
+        if(dist[i] == INF) { // Couldn't find path to airport
+            std::cout << "None";
+            continue; // Skip to next airport
+        }
+
+        // Reconstruct path by walking backwards
+        std::vector<int> path;
+        for (int at = i; at != -1; at = prev[at]) {
+            path.push_back(at);
+        }
+        // Print shortest path
+        for (int j = path.size()-1; j >= 0; j--) {
+            std::cout << airports[path[j]].code;
+            if (j != 0) {
+                std::cout << "->";
+            }
+        }
+        std::cout << std::setw(9);
+
+        // Print length
+        std::cout << dist[i] << "\t\t";
+        // Print total
+        int totalCost = getTotalCost(path, airports);
+        std::cout << totalCost << "\n";
+    }
+}

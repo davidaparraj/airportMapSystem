@@ -34,25 +34,30 @@ public:
     // Reads csv file and builds graph
     void parseAndBuild(std::ifstream& infile);
 
-    // Adds an airport to the graph. Returns its index
+    // Adds an airport to the graph
     void addNode(const std::string& code, const std::string& city);
     // Adds a directed flight from -> to  with both weights 
     void addEdge(const std::string& from, const std::string& to, int distance, int cost);
-
-    /* --------- Algorithms -------------*/
-    // Looks up index of an airport by its code. Return -1 if not found
+    // Looks up index of an airport by its code. Return its index. Return -1 if not found
     int findNode(const std::string& code) const;
     // Returns total number of airports in the graph
     int size() const;
+
+    /* --------- Algorithms -------------*/
+
     // Dijkstra's algorithm which searched the nodes and determines the shortest path.
-    std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
+    void dijkstra(int source, std::vector<int>& prev, std::vector<int>& dist);
+    // std::vector<int> dijkstra(int source, std::vector<int>& prev, std::vector<int>& costDist);
+
+
+    // Task 2) prints the shortest path given from the dijkstra algorithm
+    void printShortestPath(const std::string& origin, const std::string& dest);
+
+    // Task 3) finds and prints shortest paths to all airports in one state. Also includes paths that have stops
+    void printShortestPathBySate(const std::string& origin, const std::string& state);
 
     // Prints graph
     void print() const;
-    // prints the shortest path given from the dijkstra algo
-    void printShortestPath(const std::string& origin, const std::string& dest);
-
-
 
 
 private: 
@@ -60,6 +65,13 @@ private:
     std::vector<Airport> airports;
 };
 
+/* ---------- Helper functions ---------- */
+
+// Splits values and stores them in tokens[]
+bool splitCSVLine(const std::string& line, std::string tokens[]);
+// Returns a city's state
+std::string getState(const std::string& city);
+int getTotalCost(const std::vector<int> path, const std::vector<Airport> airports);
 
 
 #endif
