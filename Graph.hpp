@@ -33,7 +33,6 @@ class Graph {
 public:
     // Reads csv file and builds graph
     void parseAndBuild(std::ifstream& infile);
-
     // Adds an airport to the graph
     void addNode(const std::string& code, const std::string& city);
     // Adds a directed flight from -> to  with both weights 
@@ -56,8 +55,11 @@ public:
     // Task 3) finds and prints shortest paths to all airports in one state. Also includes paths that have stops
     void printShortestPathBySate(const std::string& origin, const std::string& state);
 
-    // Prints graph
-    void print() const;
+    // Task 6) Creates undirected Graph_u from original Graph G
+    Graph buildUndirected() const;
+    // Returns cost of edge from airport u to airport v, or -1 if it doesn't exist
+    int getEdgeCost(int u, int v) const;
+
 
 
 private: 
@@ -72,6 +74,7 @@ bool splitCSVLine(const std::string& line, std::string tokens[]);
 // Returns a city's state
 std::string getState(const std::string& city);
 int getTotalCost(const std::vector<int> path, const std::vector<Airport> airports);
+
 
 
 #endif
