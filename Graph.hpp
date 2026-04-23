@@ -55,21 +55,19 @@ public:
     void printShortestPathBySate(const std::string& origin, const std::string& state);
 
     // Task 4) finds and prints the shortest path to a given airport with a predetermined amount of intermediate stops
+    void findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost);
     void printPathWithStops(const std::string& origin, const std::string& dest, int stops);
 
-    
+    // Task 5) Print the number of connections for every airport
+    // recursive helper function for printPathWithStops
+    void printConnectionCounts();
 
-    // Prints graph
-    void print() const;
     // Task 6) Creates undirected Graph_u from original Graph G
     Graph buildUndirected() const;
     // Returns cost of edge from airport u to airport v, or -1 if it doesn't exist
     int getEdgeCost(int u, int v) const;
 
-    // Task 5) Print the number of connections for every airport
-    // recursive helper function for printPathWithStops
-    void findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost);
-    void printConnectionCounts();
+
 
 
 private: 
