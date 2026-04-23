@@ -58,6 +58,11 @@ public:
     void findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost);
     void printPathWithStops(const std::string& origin, const std::string& dest, int stops);
 
+    //BFS and DFS to be used in prims and kruskuls 
+    std::vector<int> DFS(int source);
+    std::vector<int> BFS(int source);
+
+    
     // Task 5) Print the number of connections for every airport
     // recursive helper function for printPathWithStops
     void printConnectionCounts();

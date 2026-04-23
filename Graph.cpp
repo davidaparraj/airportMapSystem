@@ -422,6 +422,57 @@ Graph Graph::buildUndirected() const {
 }
 
 
+std::vector<int> Graph::DFS(int source) {
+    std::vector<int> visited(airports.size(), false);
+    std::vector<int> order;
+    
+    //recursive lambda fuction for the DFS
+    std::vector<int> stack;
+    stack.push_back(source);
+
+    while (!stack.empty()) {
+        int current = stack.back();
+        stack.pop_back();
+
+        if (visited[current]) continue;
+        visited[current] = true;
+        order.push_back(current);
+        
+        //pushes the neighbors to the stack in reverse to we visit them in order
+        for (int i = airports[current].adjacent.size() - 1; i >= 0; i--) {
+            int neighbor = airports[current].adjacent[i].destination;
+            if (!visited[neighbor]) {
+                stack.push_back(neighbor);
+            }
+        }
+    }
+    return order;
+}
+std::vector<int> Graph::BFS(int source) {
+    std::vector<bool> visited(airports.size(), false);
+    std::vector<int> order;
+
+    //
+    std::vector<int> queue;
+    int front = 0;
+
+    queue.push_back(source);
+    visited[source] = true;
+
+    while(front < queue.size()) {
+        int current = queue[front];
+        front++;
+        order.push_back(current);
+
+        for (int i = 0;i < airports[current].adjacent.size();i++) {
+            int neighbor = airports[current].adjacent[i].destination;
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                queue.push_back(neighbor);
+            }
+        }
+    }
+    return order;
 // Task 7 Utilizing Prims for making a Minimal Spanning Tree.
 
 void Graph::primMST() {
