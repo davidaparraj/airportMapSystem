@@ -423,7 +423,7 @@ Graph Graph::buildUndirected() const {
 
 
 std::vector<int> Graph::DFS(int source) {
-    std::vector<int> visited(airports.size(), false);
+    std::vector<bool> visited(airports.size(), false);
     std::vector<int> order;
     
     //recursive lambda fuction for the DFS
@@ -473,6 +473,7 @@ std::vector<int> Graph::BFS(int source) {
         }
     }
     return order;
+}
 // Task 7 Utilizing Prims for making a Minimal Spanning Tree.
 
 void Graph::primMST() {
@@ -524,4 +525,63 @@ void Graph::primMST() {
                   << key[i] << "\n";
     }
     std::cout << "Total Cost of MST: " << totalCost << std::endl;
+}
+
+// Kruskal Algorithm for MST
+
+void Graph::kruskalMST() {
+    int n = airports.size();
+
+    // Collect all unique edges
+    // Use {cost, u, v} stored in a vector then sort manually
+    struct Edge {
+        int cost, u, v;
+    };
+
+    std::vector<Edge> edges;
+    for (int i = 0; i < n; i++) {
+        for (const Flight& flight : airports[i].adjacent) {
+            if (i < flight.destination) { // avoid duplicates
+                edges.push_back({flight.cost, i, flight.destination});
+            }
+        }
+    }
+
+    // Sort edges by cost using bubble sort
+    for (int i = 0; i < edges.size() - 1; i++) {
+        for (int j = 0; j < edges.size() - i - 1; j++) {
+            if (edges[j].cost > edges[j + 1].cost) {
+                Edge temp = edges[j];
+                edges[j] = edges[j + 1];
+                edges[j + 1] = temp;
+            }
+        }
+    }
+
+    UnionFind uf(n);
+    std::vector<Edge> mstEdges;
+    int totalCost = 0;
+
+    for (int i = 0; i < edges.size(); i++) {
+        if (uf.unite(edges[i].u, edges[i].v)) {
+            mstEdges.push_back(edges[i]);
+            totalCost += edges[i].cost;
+        }
+    }
+
+    // Check if MST spans all nodes
+    // For Kruskal's we print forest if disconnected
+    std::cout << "Minimal Spanning Tree (Kruskal's):\n";
+    std::cout << std::left << std::setw(20) << "Edge" << "Weight\n";
+    for (int i = 0; i < mstEdges.size(); i++) {
+        std::cout << std::left << std::setw(20)
+                  << airports[mstEdges[i].u].code + " - " + airports[mstEdges[i].v].code
+                  << mstEdges[i].cost << "\n";
+    }
+    std::cout << "Total Cost of MST: " << totalCost << std::endl;
+
+    // Check connectivity - if edges < n-1 then graph is disconnected (forest)
+    if (mstEdges.size() < n - 1) {
+        std::cout << "Note: Graph is disconnected. Result is a minimum spanning forest." << std::endl;
+    }
 }
