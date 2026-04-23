@@ -1,5 +1,6 @@
 #include "Graph.hpp"
 #include "Heap.hpp"
+#include "UnionFind.hpp"
 #include <fstream>
 #include <vector>
 #include <string>
@@ -472,4 +473,55 @@ std::vector<int> Graph::BFS(int source) {
         }
     }
     return order;
+// Task 7 Utilizing Prims for making a Minimal Spanning Tree.
+
+void Graph::primMST() {
+    const int INF = 1e9; // defining infinity
+    int n = airports.size(); // definin n as the total number of aiport nodes
+
+    // Check connectivity using BFS first
+    std::vector<int> visited = BFS(0);
+    if (visited.size() != n) { // if the size of the visited vector is not equal to the total # of airports
+        std::cout << "MST cannot be formed: graph is disconnected." << std::endl;
+        return;
+    }
+
+    std::vector<int> key(n, INF);      // minimum cost to reach each node
+    std::vector<int> parent(n, -1);    // tracks MST edges
+    std::vector<bool> inMST(n, false); // tracks if node is in MST
+
+    key[0] = 0; // start from node 0
+    int totalCost = 0; // set totalcost to 0
+
+    for (int count = 0; count < n; count++) { // checks amount of times taht there are aiports
+        // Find minimum key node not yet in MST 
+        int u = -1;
+        for (int i = 0; i < n; i++) {
+            if (!inMST[i] && (u == -1 || key[i] < key[u])) { // if not in the MST and keynode not in and key i < key u
+                u = i;
+            }
+        }
+
+        inMST[u] = true; // changes boolean to true for the node being in the MST
+        totalCost += key[u];
+
+        // Update keys of adjacent nodes
+        for (const Flight& flight : airports[u].adjacent) {
+            int v = flight.destination;
+            if (!inMST[v] && flight.cost < key[v]) {
+                key[v] = flight.cost;
+                parent[v] = u;
+            }
+        }
+    }
+
+    // Print MST
+    std::cout << "Minimal Spanning Tree (Prim's):\n";
+    std::cout << std::left << std::setw(20) << "Edge" << "Weight\n";
+    for (int i = 1; i < n; i++) {
+        std::cout << std::left << std::setw(20)
+                  << airports[parent[i]].code + " - " + airports[i].code
+                  << key[i] << "\n";
+    }
+    std::cout << "Total Cost of MST: " << totalCost << std::endl;
 }

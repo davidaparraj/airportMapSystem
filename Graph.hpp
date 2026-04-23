@@ -72,6 +72,9 @@ public:
     // Returns cost of edge from airport u to airport v, or -1 if it doesn't exist
     int getEdgeCost(int u, int v) const;
 
+    // Task 7 and 8
+    void primsMST();
+    void kruskalMST();
 
 
 
