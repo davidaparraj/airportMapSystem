@@ -57,6 +57,10 @@ public:
     // Task 4) finds and prints the shortest path to a given airport with a predetermined amount of intermediate stops
     void printPathWithStops(const std::string& origin, const std::string& dest, int stops);
 
+    //BFS and DFS to be used in prims and kruskuls 
+    std::vector<int> DFS(int source);
+    std::vector<int> BFS(int source);
+
     
 
     // Prints graph
