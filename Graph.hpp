@@ -73,7 +73,7 @@ public:
     int getEdgeCost(int u, int v) const;
 
     // Task 7 and 8
-    void primsMST();
+    void primMST();
     void kruskalMST();
 
 

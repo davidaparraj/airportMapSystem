@@ -6,6 +6,7 @@
 
 #include "Graph.hpp"
 #include "Heap.hpp"
+#include "UnionFind.hpp"
 
 
 int main() {
@@ -51,8 +52,13 @@ int main() {
     graph.printConnectionCounts();
 
     // Task 6) Create an undirect graph_u from original graph
-    Graph G_u;
-    G_u.buildUndirected();
+    Graph G_u = graph.buildUndirected();
+
+    // Task 7) Prims Minimal Spanning Tree Algorithm
+    G_u.primMST();
+
+    // Task 8) Kruskal's Minimal Spanning Tree Algorithm
+    G_u.kruskalMST();
 
 
     return 0;
