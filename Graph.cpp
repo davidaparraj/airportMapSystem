@@ -64,7 +64,7 @@ int getTotalCost(const std::vector<int> path, const std::vector<Airport> airport
     return totalCost;
 }
 
-
+// Task 1) Build graph based on the data from the csv file
 void Graph::parseAndBuild(std::ifstream& infile) {
     // Example: ABE,DTW,"Allentown, PA","Detroit, MI",424,374
     std::string line;
@@ -202,7 +202,6 @@ void Graph::printShortestPath(const std::string& origin, const std::string& dest
 }
 
 // Task 3) optimizes shortest path from origin to all airports in one state. Prints path, distance and cost
-// TODO ----> FIX FORMATTING
 void Graph::printShortestPathBySate(const std::string& origin, const std::string& state) {
     // Run Dijktra from origin
     const int INF = 1e9;
@@ -259,6 +258,7 @@ void Graph::printShortestPathBySate(const std::string& origin, const std::string
     }
 }
 
+// Task 4)
 // Finds the shortest path with a designated amount of stops
 // -- tracks stops left, total cost of path, whether an aiport has been visited to not do repeats, and chooses the shortest path from the ones that succeed
 void Graph::findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost){
@@ -295,9 +295,6 @@ void Graph::findPathWithStops(int current, int dest, int stopsLeft, int currDist
         }
     }
 }
-
-
-
 void Graph::printPathWithStops(const std::string& origin, const std::string& dest, int stops) {
     int src = findNode(origin);
     int dst = findNode(dest);
@@ -369,6 +366,7 @@ void Graph::printConnectionCounts() {
     }
 }
 
+
 /* Task 6) 
     Creates an undirected Graph.
     Only stores one directed edge for each pair of nodes u an v (either (u,v) or (v,u), not both).
@@ -383,7 +381,6 @@ int Graph::getEdgeCost(int u, int v) const {
 
     return -1; // Edge doesn't exist
 }
-
 Graph Graph::buildUndirected() const {
     Graph newGraph;
     int n = airports.size();
@@ -474,8 +471,8 @@ std::vector<int> Graph::BFS(int source) {
     }
     return order;
 }
-// Task 7 Utilizing Prims for making a Minimal Spanning Tree.
 
+// Task 7) Utilizing Prims for making a Minimal Spanning Tree.
 void Graph::primMST() {
     const int INF = 1e9; // defining infinity
     int n = airports.size(); // definin n as the total number of aiport nodes
@@ -527,8 +524,7 @@ void Graph::primMST() {
     std::cout << "Total Cost of MST: " << totalCost << std::endl;
 }
 
-// Kruskal Algorithm for MST
-
+// Task 8) Kruskal Algorithm for MST
 void Graph::kruskalMST() {
     int n = airports.size();
 
