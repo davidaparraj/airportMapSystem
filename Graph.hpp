@@ -66,7 +66,9 @@ public:
     // Returns cost of edge from airport u to airport v, or -1 if it doesn't exist
     int getEdgeCost(int u, int v) const;
 
-
+    // Task 5) Print the number of connections for every airport
+    // recursive helper function for printPathWithStops
+    void findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost);
     void printConnectionCounts();
 
 
@@ -74,8 +76,7 @@ private:
     // array containing all of the nodes (airports) in the graph
     std::vector<Airport> airports;
 
-    // recursive helper function for printPathWithStops
-void findPathWithStops(int current, int dest, int stopsLeft, int currDist, int currCost, std::vector<int>& path, std::vector<bool>& visited, std::vector<int>& bestPath, int& bestDist, int& bestCost);
+
 };
 
 /* ---------- Helper functions ---------- */

@@ -45,6 +45,7 @@ int main() {
 
     // Task 4) Shortest path with a given amount of stops
     graph.printPathWithStops("IAD", "MIA", 3);
+    graph.printPathWithStops("PIT", "ACT", 4);
 
     // Task 5)
     graph.printConnectionCounts();
